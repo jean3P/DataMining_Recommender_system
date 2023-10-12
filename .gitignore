@@ -5,7 +5,8 @@ __pycache__/
 
 # C extensions
 *.so
-
+/src/*.csv
+/resources/twitch_gamers/*.csv
 # Distribution / packaging
 .Python
 build/
