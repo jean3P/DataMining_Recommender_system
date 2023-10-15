@@ -16,7 +16,6 @@ print(louvain_communities.columns)
 features_df = pd.merge(features_df, louvain_communities, left_on='numeric_id', right_on='Node', how='left')
 
 # Now, 'features_df' will have a 'Community' column that contains community assignments
-# If you want it to be named 'community_label', you can rename it
 features_df.rename(columns={'Community': 'community_label'}, inplace=True)
 
 filename = 'large_twitch_features_with_communities.csv'
@@ -31,11 +30,16 @@ print(community_mature_preference)
 
 # User-based Recommendations
 def recommend_content(user_numeric_id):
+    # Retrieve the community label associated with the provided user_numeric_id from the features dataframe
     user_community = features_df.loc[features_df['numeric_id'] == user_numeric_id, 'community_label'].values[0]
 
+    # Check if the preference for mature content within the user's community is greater than the threshold (0.5 in
+    # this case)
     if community_mature_preference[user_community] > 0.5:  # Change this threshold as per requirement
+        # If yes, recommend mature content to the user
         return "[Community-based Algorithm] Recommend Mature Content"
     else:
+        # If no, recommend other types of content to the user
         return "[Community-based Algorithm] Recommend Other Content"
 
 
@@ -46,17 +50,21 @@ print(recommendation)
 
 #  Hybrid Strategy
 def hybrid_recommendation(user_numeric_id):
+    # Retrieve the community label for the given user_numeric_id from the features dataframe
     user_community = features_df.loc[features_df['numeric_id'] == user_numeric_id, 'community_label'].values[0]
+
+    # Retrieve the 'mature' preference value for the given user_numeric_id
     user_mature_pref = features_df.loc[features_df['numeric_id'] == user_numeric_id, 'mature'].values[0]
 
-    # If both the user and the community predominantly prefer mature content
+    # Check if both the user and the community predominantly prefer mature content
     if user_mature_pref == 1 and community_mature_preference[user_community] > 0.5:
         return "[Hybrid Algorithm] Recommend Mature Content"
+    # Check if both the user and the community predominantly prefer other content
     elif user_mature_pref == 0 and community_mature_preference[user_community] <= 0.5:
         return "[Hybrid Algorithm] Recommend Other Content"
     else:
-        # Handle the scenario where user's preference and community preference doesn't align
-        # Here, giving preference to user's individual preference
+        # This block handles the scenario where the user's individual preference and the community's preference do
+        # not align If they do not align, the system gives precedence to the individual's preference
         return "[Hybrid Algorithm] Recommend Mature Content" if user_mature_pref == 1 else ("[Hybrid Algorithm] "
                                                                                             "Recommend Other Content")
 
