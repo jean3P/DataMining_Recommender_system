@@ -7,6 +7,7 @@ __pycache__/
 *.so
 /src/*.csv
 /resources/twitch_gamers/*.csv
+/resources/outputs/*.csv
 # Distribution / packaging
 .Python
 build/

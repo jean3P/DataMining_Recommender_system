@@ -1,4 +1,5 @@
 import csv
+import os.path
 
 import leidenalg
 import pandas as pd
@@ -9,7 +10,7 @@ from dask import delayed
 import igraph as ig
 import community
 import random
-from constants import large_twitch_edges, large_twitch_features
+from constants import large_twitch_edges, large_twitch_features, outputs_path
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -28,7 +29,9 @@ def save_communities_to_csv(partition, filename, subset_filename):
     """Save community assignments to a CSV file."""
 
     # Save the entire partition
-    with open(filename, 'w', newline='') as csvfile:
+    filename_path = os.path.join(outputs_path, filename)
+    subset_filename_path = os.path.join(outputs_path, subset_filename)
+    with open(filename_path, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["Node", "Community"])
         for node, community in partition.items():
@@ -43,16 +46,43 @@ def save_communities_to_csv(partition, filename, subset_filename):
     subset = dict(items[:subset_size])
 
     # Save the 25% subset
-    with open(subset_filename, 'w', newline='') as csvfile:
+    with open(subset_filename_path, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["Node", "Community"])
         for node, community in subset.items():
             writer.writerow([node, community])
 
 
+def internal_external_links_analysis(G, partition):
+    community_edges = {}
+    for (u, v) in G.edges():
+        comm_u = partition[u]
+        comm_v = partition[v]
+
+        if comm_u == comm_v:
+            # Internal link
+            community_edges[comm_u] = community_edges.get(comm_u, {"internal": 0, "external": 0})
+            community_edges[comm_u]["internal"] += 1
+        else:
+            # External link
+            community_edges[comm_u] = community_edges.get(comm_u, {"internal": 0, "external": 0})
+            community_edges[comm_u]["external"] += 1
+
+            community_edges[comm_v] = community_edges.get(comm_v, {"internal": 0, "external": 0})
+            community_edges[comm_v]["external"] += 1
+
+    for comm, edges in community_edges.items():
+        ratio = edges["internal"] / (edges["internal"] + edges["external"])
+        print(f"    Community {comm}: Internal Links Ratio = {ratio:.2f}")
+
+
 def louvain_community_detection(G):
     partition = community.best_partition(G)
+    modularity_value = community.modularity(partition, G)
+    print(f"==== LOUVAIN ====")
+    print(f"    Modularity: {modularity_value}")
     save_communities_to_csv(partition, 'louvain_community_assignments.csv', 'louvain_community_subset.csv')
+    internal_external_links_analysis(G, partition)
 
 
 def perform_leiden_community_detection(G):
@@ -61,6 +91,10 @@ def perform_leiden_community_detection(G):
     partition = leidenalg.find_partition(ig_graph, leidenalg.ModularityVertexPartition)
     leiden_partition = dict(zip(ig_graph.vs["name"], partition.membership))
     save_communities_to_csv(leiden_partition, 'leiden_community_assignments.csv', 'leiden_community_subset.csv')
+    modularity_value = partition.modularity
+    print(f"==== LEIDEN ====")
+    print(f"    Modularity: {modularity_value}")
+    internal_external_links_analysis(G, leiden_partition)
 
 
 def main():
