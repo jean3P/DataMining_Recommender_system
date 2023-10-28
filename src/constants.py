@@ -13,3 +13,18 @@ outputs_path = os.path.join(resources_path, "outputs")
 
 louvain_file = os.path.join(outputs_path, "louvain_community_assignments.csv")
 leiden_file = os.path.join(outputs_path, "leiden_community_assignments.csv")
+
+train_df = os.path.join(outputs_path, "train_features.csv")
+valid_df = os.path.join(outputs_path, "valid_features.csv")
+test_df = os.path.join(outputs_path, "test_features.csv")
+log_file_1 = os.path.join(outputs_path, "recommendation_log.txt")
+train_80_df = os.path.join(outputs_path, "train_80_features.csv")
+test_20_df = os.path.join(outputs_path, "test_20_features.csv")
+features_with_communities = os.path.join(outputs_path, "features_with_communities.csv")
+
+louvain_same_communities_png = os.path.join(outputs_path, "louvain_same_communities.png")
+leiden_same_communities_png = os.path.join(outputs_path, "leiden_same_communities.png")
+
+louvain_not_same_communities_png = os.path.join(outputs_path, "louvain_not_same_communities.png")
+leiden_not_same_communities_png = os.path.join(outputs_path, "leiden_not_same_communities.png")
+no_community_save_png = os.path.join(outputs_path, "no_community_save.png")
