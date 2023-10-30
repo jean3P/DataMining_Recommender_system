@@ -42,8 +42,10 @@ def save_communities_to_csv(partition, filename, subset_filename):
     random.shuffle(items)
 
     # Take 15% of the shuffled partition
-    subset_size = int(len(items) * 0.015)
+    subset_size = int(len(items) * 0.001)
+    subset_size = 400
     subset = dict(items[:subset_size])
+    print(subset_size)
 
     # Save the 25% subset
     with open(subset_filename_path, 'w', newline='') as csvfile:
