@@ -25,6 +25,55 @@ def compute_all_shortest_paths(G, node):
     return paths
 
 
+def analyze_communities(G, partition):
+    community_analysis = {}
+
+    # Create a reverse mapping from community to nodes
+    communities = {}
+    for node, community in partition.items():
+        if community not in communities:
+            communities[community] = []
+        communities[community].append(node)
+
+    for community, nodes in communities.items():
+        languages = {}
+        mature_count = 0
+        non_mature_count = 0
+
+        for node in nodes:
+            # Get node attributes
+            attrs = G.nodes[node]
+
+            # Count languages
+            lang = attrs['language']
+            if lang in languages:
+                languages[lang] += 1
+            else:
+                languages[lang] = 1
+
+            # Count mature and non-mature channels
+            if attrs['mature'] == 1:
+                mature_count += 1
+            else:
+                non_mature_count += 1
+
+        # Check if there's more than one language in the community
+        multiple_languages = len(languages) > 1
+
+        # Check if there's more than one value for 'mature' in the community
+        multiple_mature_values = mature_count > 0 and non_mature_count > 0
+
+        community_analysis[community] = {
+            'multiple_languages': multiple_languages,
+            'languages': languages,
+            'multiple_mature_values': multiple_mature_values,
+            'mature_count': mature_count,
+            'non_mature_count': non_mature_count
+        }
+
+    return community_analysis
+
+
 def save_communities_to_csv(partition, filename, subset_filename):
     """Save community assignments to a CSV file."""
 
@@ -83,6 +132,12 @@ def louvain_community_detection(G):
     print(f"    Modularity: {modularity_value}")
     save_communities_to_csv(partition, 'louvain_community_assignments.csv', 'louvain_community_subset.csv')
     internal_external_links_analysis(G, partition)
+    community_analysis = analyze_communities(G, partition)
+    for community_, data in community_analysis.items():
+        print(f"Community {community_}:")
+        print(f"    Languages: {data['languages']}")
+        print(f"    Mature channels: {data['mature_count']}")
+        print(f"    Non-mature channels: {data['non_mature_count']}")
 
 
 def perform_leiden_community_detection(G):
@@ -95,6 +150,12 @@ def perform_leiden_community_detection(G):
     print(f"==== LEIDEN ====")
     print(f"    Modularity: {modularity_value}")
     internal_external_links_analysis(G, leiden_partition)
+    community_analysis = analyze_communities(G, leiden_partition)
+    for community_, data in community_analysis.items():
+        print(f"Community {community_}:")
+        print(f"    Languages: {data['languages']}")
+        print(f"    Mature channels: {data['mature_count']}")
+        print(f"    Non-mature channels: {data['non_mature_count']}")
 
 
 def main():
