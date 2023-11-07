@@ -28,3 +28,5 @@ leiden_same_communities_png = os.path.join(outputs_path, "leiden_same_communitie
 louvain_not_same_communities_png = os.path.join(outputs_path, "louvain_not_same_communities.png")
 leiden_not_same_communities_png = os.path.join(outputs_path, "leiden_not_same_communities.png")
 no_community_save_png = os.path.join(outputs_path, "no_community_save.png")
+
+log_file_2 = os.path.join(outputs_path, "link_prediction_log.txt")
