@@ -14,6 +14,10 @@ def configure_logging():
     logging.basicConfig(filename=log_file_2, level=logging.INFO, format="%(message)s", filemode='w')
 
 
+# Set seed for reproducibility
+np.random.seed(0)
+
+
 class LinkPredictor:
     def __init__(self, train_nodes, train_edges):
         """
@@ -27,6 +31,7 @@ class LinkPredictor:
         self.edges = train_edges
         self.G = None
         self.model = None
+        self.lr_model = None
 
 
 
@@ -48,7 +53,9 @@ class LinkPredictor:
 
         try:
             # Initialize node2vec model
-            node2vec = Node2Vec(self.G, dimensions=64, walk_length=30, num_walks=200, workers=4)
+            # node2vec = Node2Vec(self.G, dimensions=64, walk_length=30, num_walks=200, workers=4)
+            node2vec = Node2Vec(self.G, dimensions=10, walk_length=10, num_walks=50, workers=4)
+
 
             # Train node2vec model
             self.model = node2vec.fit(window=10, min_count=1, batch_words=4)
@@ -86,23 +93,22 @@ class LinkPredictor:
 
             # Split the data
             X_train, X_test, y_train, y_test = train_test_split(
-                examples[['source', 'target']], examples['label'], test_size=0.3, random_state=42
-            )
+                examples[['source', 'target']], examples['label'], test_size=0.3, random_state=0)
 
             # Apply prediction to the dataset
             X_train['similarity'] = [self.predict_link(row['source'], row['target']) for index, row in X_train.iterrows()]
 
             # Train a logistic regression model
-            lr = LogisticRegression(random_state=42)
-            lr.fit(X_train[['similarity']], y_train)
+            self.lr_model = LogisticRegression(random_state=0)
+            self.lr_model.fit(X_train[['similarity']], y_train)
 
             # Predict on the test set
-            X_test['similarity'] = [self.predict_link(row['source'], row['target']) for index, row in X_test.iterrows()]
-            y_pred = lr.predict_proba(X_test[['similarity']])[:, 1]
+            #X_test['similarity'] = [self.predict_link(row['source'], row['target']) for index, row in X_test.iterrows()]
+            #y_pred = self.lr_model.predict_proba(X_test[['similarity']])[:, 1]
 
             # Evaluate the model
-            auc_score = roc_auc_score(y_test, y_pred)
-            print(f'The AUC score of the link prediction model is: {auc_score}')
+            #auc_score = roc_auc_score(y_test, y_pred)
+            #print(f'The AUC score of the link prediction model is: {auc_score}')
 
         
         except self.G is None:
@@ -121,6 +127,33 @@ class LinkPredictor:
         
         except self.model is None:
             logging.error("Need to train model.")
+
+
+    def predict_probability(self, source, target):
+        """
+        Predict the probability of a link between two nodes using the trained logistic regression model.
+        
+        :param source: ID of the first node
+        :param target: ID of the second node
+        :return: Probability of a link as predicted by the logistic regression model
+        """
+        # Ensure the node2vec model has been trained
+        if self.model is None:
+            raise ValueError("The node2vec model needs to be trained before predicting.")
+
+        # Ensure the logistic regression model has been trained
+        if self.lr_model is None:
+            raise ValueError("The logistic regression model needs to be trained before predicting.")
+
+        # Calculate the similarity score using the node2vec embeddings
+        similarity = self.predict_link(source, target)
+
+        # Create a DataFrame with the similarity score, with column name that matches the training data
+        similarity_score_reshaped = pd.DataFrame([[similarity]], columns=['similarity'])
+
+        # Predict the probability using the logistic regression model
+        probability = self.lr_model.predict_proba(similarity_score_reshaped)[:, 1][0]
+        return probability
 
 
     
@@ -155,12 +188,22 @@ def main():
     predictor.train_link_predictor()
 
     # Predict a link (example: between node 1 and node 2)
-    prediction_score = predictor.predict_link(1, 2)
-    print(f'Prediction score for link between node 1 and node 2: {prediction_score}')
+    prediction_score = predictor.predict_link(2, 3)
+    print(f'Similarity score for link between node 2 and node 3: {prediction_score}')
+
+    # Predict the probability of a link between node 1 and node 2
+    link_probability = predictor.predict_probability(2, 3)
+    print(f'Probability of link between node 2 and node 3: {link_probability}')
+
 
     # # Predict a link (example: between node 22970 and node 160961)
     # prediction_score = predictor.predict_link(22970, 160961)
     # print(f'Prediction score for link between node 22970 and node 160961: {prediction_score}')
+
+    # # Predict the probability of a link between node 22970 and node 160961
+    # link_probability = predictor.predict_probability(22970, 160961)
+    # print(f'Probability of link between node 22970 and node 160961: {link_probability}')
+
 
 
     
