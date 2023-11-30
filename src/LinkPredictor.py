@@ -9,7 +9,6 @@ import logging
 
 from constants import log_file_2, large_twitch_edges, large_twitch_features, outputs_path, louvain_file, leiden_file
 
-
 def configure_logging():
     logging.basicConfig(filename=log_file_2, level=logging.INFO, format="%(message)s", filemode='w')
 
@@ -159,12 +158,7 @@ class LinkPredictor:
     
 def main():
 
-    # nodes = pd.read_csv(large_twitch_features)
-    # edges = pd.read_csv(large_twitch_edges)
-
-    # edges = edges.rename(columns={'numeric_id_1': 'source', 'numeric_id_2': 'target'})
-
-    # print(edges)
+    # Example of the link predictor usage
 
     # Creating a simple graph with nodes and edges
     nodes = pd.DataFrame({
@@ -172,7 +166,6 @@ def main():
         'language': ['en', 'fr', 'en', 'de', 'en'],
         'views': [25, 10, 15, 10, 5]
     })
-
     edges = pd.DataFrame({
         'source': [1, 1, 2, 3, 3],
         'target': [2, 3, 4, 4, 5]
