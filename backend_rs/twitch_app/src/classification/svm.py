@@ -1,6 +1,7 @@
 
-from twitch_app.src.classification.constants import train_80, test_20
+
 from twitch_app.src.classification.ModelTrainer import ModelTrainer
+from twitch_app.src.classification.paths import train_80, test_20
 
 forest_trainer = ModelTrainer(
     model_type='svm',

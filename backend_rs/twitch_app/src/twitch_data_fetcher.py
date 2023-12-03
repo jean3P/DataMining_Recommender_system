@@ -1,6 +1,7 @@
 import requests
 import pandas as pd
 import logging
+from datetime import datetime
 
 
 class TwitchDataFetcher:
@@ -17,6 +18,21 @@ class TwitchDataFetcher:
             'Authorization': f'Bearer {self.access_token}'
         }
 
+    def get_twitch_id(self):
+        """
+        Get only the Twitch user's ID.
+        :return: Twitch user's ID as a string or None if not found.
+        """
+        user_info_url = f'https://api.twitch.tv/helix/users?login={self.username}'
+        user_response = self._get_response_json(user_info_url)
+
+        if user_response and 'data' in user_response and len(user_response['data']) > 0:
+            user_data = user_response['data'][0]
+            return user_data.get('id')
+        else:
+            logging.error(f"No data found for user: {self.username}")
+            return None
+
     def get_user_info(self):
         """
         Get Twitch user information.
@@ -25,7 +41,8 @@ class TwitchDataFetcher:
         user_info_url = f'https://api.twitch.tv/helix/users?login={self.username}'
         stream_info_url = f'https://api.twitch.tv/helix/streams?user_login={self.username}'
 
-        user_info_df = pd.DataFrame(columns=['twitch_id', 'created_at', 'affiliated', 'language', 'mature', 'updated_at'])
+        user_info_df = pd.DataFrame(
+            columns=['twitch_id', 'created_at', 'affiliated', 'language', 'mature', 'updated_at'])
 
         user_response = self._get_response_json(user_info_url)
         stream_response = self._get_response_json(stream_info_url)
@@ -50,15 +67,32 @@ class TwitchDataFetcher:
         user_data = user_response['data'][0] if user_response['data'] else {}
         stream_data = stream_response['data'][0] if stream_response['data'] else {}
 
+        lang = stream_data.get('language', '').upper()  # Set default to empty string and convert to upper case
+
+        # Handle 'created_at'
+        created_at = user_data.get('created_at')
+        if created_at:
+            create = datetime.strptime(created_at, '%Y-%m-%dT%H:%M:%SZ')
+            created_formatted_date = create.strftime('%Y-%m-%d')
+        else:
+            created_formatted_date = None
+
+        # Handle 'started_at'
+        started_at = stream_data.get('started_at')  # Note: This should be from 'stream_data', not 'user_data'
+        if started_at:
+            update = datetime.strptime(started_at, '%Y-%m-%dT%H:%M:%SZ')
+            updated_formatted_date = update.strftime('%Y-%m-%d')
+        else:
+            updated_formatted_date = None
+
         user_info = {
             'twitch_id': user_data.get('id'),
-            'created_at': user_data.get('created_at'),
+            'created_at': created_formatted_date,
             'affiliated': 1 if user_data.get('broadcaster_type') == 'affiliate' else 0,
-            'language': stream_data.get('language'),
+            'language': lang,
             'mature': int(stream_data.get('is_mature', False)),
-            'updated_at': stream_data.get('started_at')
+            'updated_at': updated_formatted_date
         }
-
         return pd.DataFrame([user_info])
 
 # def main():

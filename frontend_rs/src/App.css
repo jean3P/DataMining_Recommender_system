@@ -53,6 +53,43 @@ button.clear:hover {
 }
 
 
+.community-data {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #fff; /* White border */
+  border-radius: 8px;
+  max-width: 400px; /* Increased width for better visibility */
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+  background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent background for readability */
+}
+
+.community-data h2 {
+  color: #dcdcdc; /* Lighter shade of purple */
+  margin-bottom: 10px;
+  font-size: 1.2rem; /* Slightly larger font size for the heading */
+}
+
+.community-data table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem; /* Adjust the font size as needed */
+}
+
+.community-data th,
+.community-data td {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid #fff;
+  word-break: break-word; /* Breaks long words to prevent overflow */
+}
+
+.community-data td {
+  color: #dcdcdc; /* Light grey color for better readability */
+}
+
 .error {
   color: #ff0000;
+  margin-top: 10px;
 }

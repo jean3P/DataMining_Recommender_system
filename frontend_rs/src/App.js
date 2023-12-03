@@ -35,16 +35,36 @@ function App() {
           />
           <button onClick={fetchUserData}>Fetch User Data</button>
           <button onClick={clearData} className="clear">Clear</button>
+
           {userData && (
               <div className="user-data">
                 <p><strong>ID:</strong> {userData.twitch_id}</p>
-                <p><strong>Created At:</strong> {new Date(userData.created_at).toLocaleDateString()}</p>
+                <p><strong>Created At:</strong> {userData.created_at && new Date(userData.created_at).toLocaleDateString()}</p>
                 <p><strong>Affiliated:</strong> {userData.affiliated ? 'Yes' : 'No'}</p>
                 <p><strong>Language:</strong> {userData.language}</p>
                 <p><strong>Mature Content:</strong> {userData.mature ? 'Yes' : 'No'}</p>
-                <p><strong>Last Updated:</strong> {new Date(userData.updated_at).toLocaleDateString()}</p>
+                <p><strong>Last Updated:</strong> {userData.updated_at && new Date(userData.updated_at).toLocaleDateString()}</p>
+
+                {userData.community !== undefined && (
+                    <div className="community-data">
+                      <h2>Community Prediction</h2>
+                      <table>
+                        <tbody>
+                        <tr>
+                          <th>Community</th>
+                          <td>{userData.community}</td>
+                        </tr>
+                        <tr>
+                          <th>Probability</th>
+                          <td>{userData.probability}</td>
+                        </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                )}
               </div>
           )}
+
           {error && <p className="error">{error}</p>}
         </header>
       </div>

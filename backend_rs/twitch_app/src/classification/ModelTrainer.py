@@ -127,7 +127,7 @@ class ModelTrainer:
         elif self.model_type == 'svm':
             self.pipeline = Pipeline([
                 ('preprocessor', self.preprocessor),
-                ('classifier', SVC())
+                ('classifier', SVC(probability=True))
             ])
         else:
             raise ValueError(
