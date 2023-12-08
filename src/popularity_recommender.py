@@ -44,49 +44,13 @@ def IsLinked(edges, node1_id, node2_id):
     return is_linked
 
 
-def PopularityRecommender(node, features, edges):
+def PopularityRecommender(new_user_id, new_user_community): 
     '''
         Returns a top rank list of recommendations based on the user popularity inside of the community
     '''
 
-    # Ranking by Community
-    comm_number = node.iloc[0]['Community']
-
-    community = features.loc[features['Community']==comm_number].sort_values(by='num_edges', ascending=False)
-
-    is_linked = False
-    top_rank = pd.DataFrame(columns=community.columns)
-
-    for index, row in community.iterrows():
-        if IsLinked(edges, node.iloc[0]['Id'], row[0])==False:
-            top_rank = top_rank.append(row, ignore_index=True)
-            if top_rank.shape[0]==5:
-                break
-    
-    print('user values: \n', node)
-    print('recommendations: \n', top_rank)
-    # print('community info: \n', community.describe())
-
-def AllCommunityRecommendations(features, edges):
-
-    # Selecting some nodes for each Leiden community
-    nodes_id_comm = [141493, 98343, 1679, 30061, 30293, 164528, 47048, 100109, 25310, 91680, 22970, 16162, 17553, 122816, 146294, 1942, 152300, 132852, 109249, 67761, 44630, 77002]
-    number_comm = list(range(0,22))
-
-    nodes = features[features['Id'].isin(nodes_id_comm)].sort_values(by='Community')
-
-    print(nodes.shape)
-
-    for index, row in nodes.iterrows():
-        node = pd.DataFrame([row])
-        PopularityRecommender(node, features, edges)
-    
-    
-
-def main():
-
     # Loading data
-    louvain = pd.read_csv(louvain_file)
+    # louvain = pd.read_csv(louvain_file)
     leiden = pd.read_csv(leiden_file)
     edges = pd.read_csv(large_twitch_edges)
     features = pd.read_csv(large_twitch_features)
@@ -99,15 +63,64 @@ def main():
     # Adding number of edges to Node features
     features_num_edges = NumberOfEdges(features_comm, edges)
 
+    # Ranking by Community
+    comm_number = new_user_community
+
+    community = features_num_edges.loc[features_num_edges['Community']==comm_number].sort_values(by='num_edges', ascending=False)
+
+    is_linked = False
+    top_rank = pd.DataFrame(columns=community.columns)
+
+    for index, row in community.iterrows():
+        if IsLinked(edges, new_user_id, row[0])==False:
+            top_rank = pd.concat([top_rank, row.to_frame().T], ignore_index=True)
+            if top_rank.shape[0]==10:
+                break
+    
+    print('user values:')
+    print('user id:', new_user_id)
+    print('user community:', new_user_community)
+    print('recommendations: \n', top_rank)
+    # print('community info: \n', community.describe())
+
+# def AllCommunityRecommendations(features, edges):
+
+#     # Selecting some nodes for each Leiden community
+#     nodes_id_comm = [141493, 98343, 1679, 30061, 30293, 164528, 47048, 100109, 25310, 91680, 22970, 16162, 17553, 122816, 146294, 1942, 152300, 132852, 109249, 67761, 44630, 77002]
+#     number_comm = list(range(0,22))
+
+#     nodes = features[features['Id'].isin(nodes_id_comm)].sort_values(by='Community')
+
+#     print(nodes.shape)
+
+#     for index, row in nodes.iterrows():
+#         node = pd.DataFrame([row])
+#         PopularityRecommender(node, features, edges)
+    
+    
+
+def main():
+
+    # Loading data
+    # louvain = pd.read_csv(louvain_file)
+    leiden = pd.read_csv(leiden_file)
+    edges = pd.read_csv(large_twitch_edges)
+    features = pd.read_csv(large_twitch_features)
+
+    # Adding community to Node features
+    features = features.rename(columns={'numeric_id': 'Node'})
+    features_comm = pd.merge(leiden, features, on="Node")
+    features_comm = features_comm.rename(columns={'Node': 'Id'})
+
     # Selecting a random node to recommend
     np.random.seed(0)
     node_to_recommend = features_comm.sample(1)
 
-    print("AAA" , type(node_to_recommend))
+    print(node_to_recommend.iloc[0]['Id'])
 
-    PopularityRecommender(node_to_recommend, features_num_edges, edges)
+    PopularityRecommender(node_to_recommend.iloc[0]['Id'], node_to_recommend.iloc[0]['Community'])
 
-    AllCommunityRecommendations(features_num_edges, edges)
+    # AllCommunityRecommendations(features_num_edges, edges)
 
 
 

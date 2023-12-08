@@ -145,7 +145,10 @@ def louvain_community_detection(G):
 def perform_leiden_community_detection(G):
     # Convert networkx graph to igraph
     ig_graph = ig.Graph.TupleList(G.edges(), directed=False)
-    partition = leidenalg.find_partition(ig_graph, leidenalg.ModularityVertexPartition)
+    # partition = leidenalg.find_partition(ig_graph, leidenalg.ModularityVertexPartition)
+    partition = leidenalg.find_partition(ig_graph,
+                                         leidenalg.RBConfigurationVertexPartition,
+                                         resolution_parameter=6.0)
     leiden_partition = dict(zip(ig_graph.vs["name"], partition.membership))
     save_communities_to_csv(leiden_partition, 'leiden_community_assignments.csv', 'leiden_community_subset.csv')
     modularity_value = partition.modularity

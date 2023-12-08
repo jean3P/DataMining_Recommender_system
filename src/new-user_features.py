@@ -129,8 +129,8 @@ def main():
     # username = 'porelpepe'
     # username = 'Singularidad314'
     #username = 'el_pesadito'
-    username = "Gorgc"
-    #username = "twitchdev"
+    # username = "Gorgc"
+    username = "twitchdev"
 
     # Initializing the fetcher with the username
     fetcher = TwitchDataFetcher(username)

@@ -32,3 +32,7 @@ no_community_save_png = os.path.join(outputs_path, "no_community_save.png")
 log_file_2 = os.path.join(outputs_path, "LinkPredictor_log.txt")
 log_file_3 = os.path.join(outputs_path, "new-user_features_log.txt")
 log_file_4 = os.path.join(outputs_path, "link_prediction_recommender_log.txt")
+log_file_5 = os.path.join(outputs_path, "train_link_prediction_log.txt")
+
+trained_models_path = os.path.join(resources_path, "models")
+
