@@ -12,12 +12,12 @@ def NumberOfEdges(features, edges) :
 
     # Counting source edges
     edges_count = edges.groupby('numeric_id_1').size().reset_index(name='num_edges_src')
-    features_with_edges_count = pd.merge(features, edges_count, how='left', left_on='Id', right_on='numeric_id_1')
+    features_with_edges_count = pd.merge(features, edges_count, how='left', left_on='Node', right_on='numeric_id_1')
     features_with_edges_count['num_edges_src'] = features_with_edges_count['num_edges_src'].fillna(0)
 
     # Counting target edges
     edges_count = edges.groupby('numeric_id_2').size().reset_index(name='num_edges_target')
-    features_with_edges_count = pd.merge(features_with_edges_count, edges_count, how='left', left_on='Id', right_on='numeric_id_2')
+    features_with_edges_count = pd.merge(features_with_edges_count, edges_count, how='left', left_on='Node', right_on='numeric_id_2')
     features_with_edges_count['num_edges_target'] = features_with_edges_count['num_edges_target'].fillna(0)
 
     # Summing up edges
@@ -58,7 +58,7 @@ def PopularityRecommender(new_user_id, new_user_community):
     # Adding community to Node features
     features = features.rename(columns={'numeric_id': 'Node'})
     features_comm = pd.merge(leiden, features, on="Node")
-    features_comm = features_comm.rename(columns={'Node': 'Id'})
+    # features_comm = features_comm.rename(columns={'Node': 'Id'})
 
     # Adding number of edges to Node features
     features_num_edges = NumberOfEdges(features_comm, edges)
@@ -77,11 +77,13 @@ def PopularityRecommender(new_user_id, new_user_community):
             if top_rank.shape[0]==10:
                 break
     
-    print('user values:')
-    print('user id:', new_user_id)
-    print('user community:', new_user_community)
-    print('recommendations: \n', top_rank)
+    return top_rank
+    # print('user values:')
+    # print('user id:', new_user_id)
+    # print('user community:', new_user_community)
+    # print('recommendations: \n', top_rank)
     # print('community info: \n', community.describe())
+
 
 # def AllCommunityRecommendations(features, edges):
 
@@ -110,15 +112,15 @@ def main():
     # Adding community to Node features
     features = features.rename(columns={'numeric_id': 'Node'})
     features_comm = pd.merge(leiden, features, on="Node")
-    features_comm = features_comm.rename(columns={'Node': 'Id'})
+    # features_comm = features_comm.rename(columns={'Node': 'Id'})
 
     # Selecting a random node to recommend
     np.random.seed(0)
     node_to_recommend = features_comm.sample(1)
 
-    print(node_to_recommend.iloc[0]['Id'])
+    print(node_to_recommend.iloc[0]['Node'])
 
-    PopularityRecommender(node_to_recommend.iloc[0]['Id'], node_to_recommend.iloc[0]['Community'])
+    print(PopularityRecommender(node_to_recommend.iloc[0]['Node'], node_to_recommend.iloc[0]['Community']))
 
     # AllCommunityRecommendations(features_num_edges, edges)
 

@@ -33,7 +33,10 @@ def TwitchLinkPredictRecommender(new_user_id, new_user_community, community_node
     model_filename = os.path.join(trained_models_path, 'link_prediction_community_'+str(new_user_community)+'.pkl')
     predictor = joblib.load(model_filename)
 
-    link_predictions = pd.DataFrame(columns=['NewUserID', 'Node', 'LinkProbability', 'LinkPredScore'])
+    # link_predictions = pd.DataFrame(columns=['NewUserID', 'Node', 'LinkProbability', 'LinkPredScore'])
+    link_predictions = pd.DataFrame(columns=new_user_community_nodes.columns)
+    link_predictions['LinkProbability'] = None
+    link_predictions['LinkPredScore'] = None
 
     # Calculate link probability and prediction for between the new user and the nodes in the community.
     for index, row in new_user_community_nodes.iterrows():
@@ -41,8 +44,10 @@ def TwitchLinkPredictRecommender(new_user_id, new_user_community, community_node
         prediction_score = predictor.predict_link(new_user_id, node)
         link_probability = predictor.predict_probability(new_user_id, node)
 
-        new_row = pd.DataFrame({'NewUserID': [new_user_id], 'Node': [node], 'LinkProbability': [link_probability], 'LinkPredScore': [prediction_score]})
-        link_predictions = pd.concat([link_predictions, new_row], ignore_index=True)
+        new_row = row
+        new_row['LinkProbability'] = link_probability
+        new_row['LinkPredScore'] = prediction_score
+        link_predictions.loc[len(link_predictions)] = new_row
 
     return link_predictions.sort_values(by='LinkProbability', ascending=False)
 
@@ -69,9 +74,14 @@ def TwitchRecommender(new_user_id, new_user_community):
 
     if new_user_id in nodes_leiden['Node'].values:
         new_user_community = nodes_leiden.loc[nodes_leiden['Node']==new_user_id, 'Community'].values[0]
-        # print(new_user_community.values[0])
         print("User founded in dataset. Generating recommendations based on Link predictions...")
         recommendations = TwitchLinkPredictRecommender(new_user_id, new_user_community, community_nodes, community_edges)
+
+        # Adding features to the recommendations
+        features = pd.read_csv(large_twitch_features)
+        features = features.rename(columns={'numeric_id': 'Node'})
+        recommendations = pd.merge(recommendations, features, on="Node")
+
     else:
         print("User not founded in dataset. Generating recommendations based on Popularity... ")
         recommendations = PopularityRecommender(new_user_id, new_user_community)
@@ -84,12 +94,14 @@ def main():
     new_user_id = 37182
     new_user_community = 0
 
+    print("Preparing list of recommendations for user: ", new_user_id)
     print(TwitchRecommender(new_user_id, new_user_community))
 
     
     new_user_id = 170000
     new_user_community = 7
 
+    print("Preparing list of recommendations for user: ", new_user_id)
     print(TwitchRecommender(new_user_id, new_user_community))
     
 
