@@ -41,18 +41,24 @@ def TwitchLinkPredictRecommender(new_user_id, new_user_community, community_node
     # Calculate link probability and prediction for between the new user and the nodes in the community.
     for index, row in new_user_community_nodes.iterrows():
         node = row['Node']
-        prediction_score = predictor.predict_link(new_user_id, node)
-        link_probability = predictor.predict_probability(new_user_id, node)
+        if node != new_user_id:
+            prediction_score = predictor.predict_link(new_user_id, node)
+            link_probability = predictor.predict_probability(new_user_id, node)
 
-        new_row = row
-        new_row['LinkProbability'] = link_probability
-        new_row['LinkPredScore'] = prediction_score
-        link_predictions.loc[len(link_predictions)] = new_row
+            new_row = row
+            new_row['LinkProbability'] = link_probability
+            new_row['LinkPredScore'] = prediction_score
+            link_predictions.loc[len(link_predictions)] = new_row
 
     return link_predictions.sort_values(by='LinkProbability', ascending=False)
 
 
 def TwitchRecommender(new_user_id, new_user_community):
+    """
+    :param new_user_id: Integer. User ID.
+    :param new_user_community: Integer. Community ID.  
+    :return: json con campos seleccionados y campo tipo de recommender
+    """
     # Loading nodes with community and edges 
     nodes_leiden = pd.read_csv(leiden_file)
     edges = pd.read_csv(large_twitch_edges)
@@ -82,11 +88,20 @@ def TwitchRecommender(new_user_id, new_user_community):
         features = features.rename(columns={'numeric_id': 'Node'})
         recommendations = pd.merge(recommendations, features, on="Node")
 
+        # Formatting into a json
+        json_recommendations = {"algorithm": "Link prediction"}
+        json_recommendations["recommendations:"] = recommendations.head(5).to_json(orient='records', lines=False)
+
+
     else:
         print("User not founded in dataset. Generating recommendations based on Popularity... ")
         recommendations = PopularityRecommender(new_user_id, new_user_community)
 
-    return recommendations
+        # Formatting into a json
+        json_recommendations = {"algorithm": "Popularity"}
+        json_recommendations["recommendations:"] = recommendations.head(5).to_json(orient='records', lines=False)
+
+    return json_recommendations
 
 
 def main():
@@ -97,9 +112,15 @@ def main():
     print("Preparing list of recommendations for user: ", new_user_id)
     print(TwitchRecommender(new_user_id, new_user_community))
 
-    
+    # recomm = TwitchRecommender(new_user_id, new_user_community)
+    # print(recomm.head(5))
+    # print(recomm.head(5).to_json(orient='records', lines=False))
+
+
     new_user_id = 170000
+    # new_user_id = 206981151
     new_user_community = 7
+    # new_user_community = 1
 
     print("Preparing list of recommendations for user: ", new_user_id)
     print(TwitchRecommender(new_user_id, new_user_community))
