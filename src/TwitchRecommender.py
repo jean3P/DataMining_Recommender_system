@@ -33,8 +33,6 @@ def TwitchLinkPredictRecommender(new_user_id, new_user_community, community_node
 
     # Load the model from the file
     model_filename = os.path.join(trained_models_path, 'link_prediction_community_'+str(new_user_community)+'.pkl')
-    print(model_filename)
-    model_filename = Path("C:/Users/shern/Google Drive/Master Computer Science/Seminar Recommender Systems/Twitch_Communities/DataMining_Recommender_system/resources/models/link_prediction_community_7.pkl")
     predictor = joblib.load(model_filename)
 
     # link_predictions = pd.DataFrame(columns=['NewUserID', 'Node', 'LinkProbability', 'LinkPredScore'])
