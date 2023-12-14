@@ -46,11 +46,6 @@ class TwitchDataFetcher:
         user_features_df['language'] = None
         user_features_df['affiliated'] = None
 
-        features = pd.read_csv(large_twitch_features)
-        features = features.rename(columns={'numeric_id': 'Node'})
-
-
-
         response_user = requests.get(f'https://api.twitch.tv/helix/users?login={self.username}', headers=self.headers)
 
         response_stream_last = requests.get(f'https://api.twitch.tv/helix/streams?user_login={self.username}', headers=self.headers)
@@ -67,31 +62,20 @@ class TwitchDataFetcher:
 
             # Extract individual fields
             user_id = user_data.get('id', None)
+            user_features_df['Id'] = [int(user_id)]
+            username = user_data.get('login', None)
+            broadcaster_type = user_data.get('broadcaster_type', None)
+            # view_count = user_data.get('view_count', 0) # This field has got deprecated
+            created_at = user_data.get('created_at', None)
 
-            if user_id in features['Node'].values:
-                user_features_df['Id'] = [int(user_id)]
-
-                user_features_df['mature'] = 1
-                user_features_df['created_at'] = 1
-                user_features_df['updated_at'] = 1
-                # user_features_df['dead_account'] = 1
-                user_features_df['language'] = 1
-                user_features_df['affiliated'] = 1
-
+            # Saving in dataframe
+            user_features_df['Id'] = [int(user_id)]
+            # user_features_df['views'] = [int(view_count)]
+            user_features_df['created_at'] = [created_at]
+            if broadcaster_type == 'affiliated':
+                user_features_df['affiliated'] = [1]
             else:
-                username = user_data.get('login', None)
-                broadcaster_type = user_data.get('broadcaster_type', None)
-                # view_count = user_data.get('view_count', 0) # This field has got deprecated
-                created_at = user_data.get('created_at', None)
-
-                # Saving in dataframe
-                user_features_df['Id'] = [int(user_id)]
-                # user_features_df['views'] = [int(view_count)]
-                user_features_df['created_at'] = [created_at]
-                if broadcaster_type == 'affiliated':
-                    user_features_df['affiliated'] = [1]
-                else:
-                    user_features_df['affiliated'] = [0]
+                user_features_df['affiliated'] = [0]
 
         else:
             print("No user data found.")
@@ -111,8 +95,6 @@ class TwitchDataFetcher:
             user_features_df['updated_at'] = [last_stream_started_at]
         else:
             print("No last stream data found.")
-
-
         
         return user_features_df
     
@@ -176,15 +158,13 @@ def main():
     #username = 'el_pesadito'
     # username = "Gorgc"
     username = "twitchdev"
-    username = "944u3gva6ksunn6t"
+    # username = "944u3gva6ksunn6t"
 
     # Initializing the fetcher with the username
     fetcher = TwitchDataFetcher(username)
 
-
     # Fetching the user features
     features_df = fetcher.get_user_info()
-    print(features_df.dtypes)
     print('Features of the new user: \n ', features_df)
 
     new_user_id = 495 # username="aphasia"
