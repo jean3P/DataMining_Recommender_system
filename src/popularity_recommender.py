@@ -97,6 +97,10 @@ def PopularityRecommender(new_user_id, new_user_community):
 
 #     for index, row in nodes.iterrows():
 #         node = pd.DataFrame([row])
+
+
+
+
 #         PopularityRecommender(node, features, edges)
     
     
