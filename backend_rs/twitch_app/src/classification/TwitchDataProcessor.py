@@ -10,8 +10,12 @@ class TwitchDataProcessor:
 
     def process_data(self):
         # Convert dates to datetime objects
+        if 'updated_at' not in self.user_data or self.user_data['updated_at'] is None:
+            updated_at = datetime.strptime(self.user_data['created_at'], '%Y-%m-%d')
+        else:
+            updated_at = datetime.strptime(self.user_data['updated_at'], '%Y-%m-%d')
+
         created_at = datetime.strptime(self.user_data['created_at'], '%Y-%m-%d')
-        updated_at = datetime.strptime(self.user_data['updated_at'], '%Y-%m-%d')
 
         # Calculate account_age (in days)
         account_age = (updated_at - created_at).days
@@ -36,6 +40,7 @@ class TwitchDataProcessor:
 
         # Converting to DataFrame
         prediction_df = pd.DataFrame([data_for_prediction])
+
         return prediction_df
 
 

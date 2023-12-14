@@ -75,6 +75,7 @@ function App() {
                           <th>Mature</th>
                           <th>Created At</th>
                           <th>Updated At</th>
+                          <th>Num. Edges</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -86,6 +87,41 @@ function App() {
                               <td>{recommendation.mature ? 'Yes' : 'No'}</td>
                               <td>{recommendation.created_at}</td>
                               <td>{recommendation.updated_at}</td>
+                              <td>{recommendation.num_edges}</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                      </table>
+                    </div>
+                )}
+
+                {userData.algorithm === 'Link prediction' && userData.results && (
+                    <div className="recommendations">
+                      <h2>Recommendations by Link Prediction</h2>
+                      <table>
+                        <thead>
+                        <tr>
+                          <th>Node</th>
+                          <th>Affiliate</th>
+                          <th>Language</th>
+                          <th>Mature</th>
+                          <th>Created At</th>
+                          <th>Updated At</th>
+                          <th>Probability</th>
+                          <th>Prediction Score</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {userData.results.map((recommendation) => (
+                            <tr key={recommendation.Node}>
+                              <td>{recommendation.Node}</td>
+                              <td>{recommendation.affiliate ? 'Yes' : 'No'}</td>
+                              <td>{recommendation.language}</td>
+                              <td>{recommendation.mature ? 'Yes' : 'No'}</td>
+                              <td>{new Date(recommendation.created_at).toLocaleDateString()}</td>
+                              <td>{new Date(recommendation.updated_at).toLocaleDateString()}</td>
+                              <td>{recommendation.LinkProbability.toFixed(3)}</td>
+                              <td>{recommendation.LinkPredScore.toFixed(3)}</td>
                             </tr>
                         ))}
                         </tbody>

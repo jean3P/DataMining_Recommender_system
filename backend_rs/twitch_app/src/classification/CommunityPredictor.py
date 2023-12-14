@@ -11,6 +11,7 @@ class CommunityPredictor:
 
     def predict(self):
         # Generate predictions and probabilities
+        print(self.prediction_df)
         probabilities = self.model.predict_proba(self.prediction_df)
         # predictions = self.model.predict(self.prediction_df)
 

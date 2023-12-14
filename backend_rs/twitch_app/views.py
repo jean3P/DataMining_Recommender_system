@@ -3,12 +3,12 @@ from datetime import datetime
 from django.http import JsonResponse
 import os
 from .constants import community_labels, model_path
-from .models import TwitchUser
 from twitch_app.src.twitch_data_fetcher import \
     TwitchDataFetcher  # Ensure this is the correct import for your fetcher class
+from .models import TwitchUser
 from .src.classification.CommunityPredictor import CommunityPredictor
 from .src.classification.TwitchDataProcessor import TwitchDataProcessor
-from .src.classification.TwitchRecommender import TwitchRecommender
+from .src.classification.TwitchRecommender import TwitchRecommenderSystem
 
 
 def format_twitch_user(twitch_user):
@@ -55,11 +55,15 @@ def fetch_twitch_data(request, username):
             user_info_df = fetcher.get_user_info()
             if not user_info_df.empty:
                 user_info = user_info_df.iloc[0].to_dict()
-
+        # print(user_info)
         # Process the data for prediction
+        if 'updated_at' not in user_info or user_info['updated_at'] is None:
+            user_info.update({'updated_at': user_info.get('created_at')})
+        if user_info.get('language') == '':
+            user_info.update({'language': 'EN'})
         processor = TwitchDataProcessor(user_info)
         prediction_df = processor.process_data()
-        print(prediction_df)
+        # print(prediction_df)
         m_p = os.path.join(os.getcwd(), model_path)
         predictor = CommunityPredictor(m_p, community_labels, prediction_df)
         community_prediction = predictor.predict()
@@ -70,7 +74,8 @@ def fetch_twitch_data(request, username):
         # Fetch Recommendations
         print(twitch_id)
         print(community_prediction['community'])
-        recommendations_json = TwitchRecommender(twitch_id, community_prediction['community'])
+        recommender_system = TwitchRecommenderSystem()
+        recommendations_json = recommender_system.twitch_recommender(twitch_id, community_prediction['community'])
         recommendations = json.loads(recommendations_json)
 
         #

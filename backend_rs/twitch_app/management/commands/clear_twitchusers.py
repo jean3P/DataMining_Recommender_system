@@ -1,7 +1,7 @@
 # twitch_app/management/commands/clear_twitchusers.py
 
 from django.core.management.base import BaseCommand
-from twitch_app.models import TwitchUser
+from twitch_app.src.classification.models import TwitchUser
 
 class Command(BaseCommand):
     help = 'Clears the TwitchUser table and resets IDs'
