@@ -6,6 +6,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score
 
+from pathlib import Path
+
 import joblib
 
 from popularity_recommender import PopularityRecommender
@@ -31,6 +33,8 @@ def TwitchLinkPredictRecommender(new_user_id, new_user_community, community_node
 
     # Load the model from the file
     model_filename = os.path.join(trained_models_path, 'link_prediction_community_'+str(new_user_community)+'.pkl')
+    print(model_filename)
+    model_filename = Path("C:/Users/shern/Google Drive/Master Computer Science/Seminar Recommender Systems/Twitch_Communities/DataMining_Recommender_system/resources/models/link_prediction_community_7.pkl")
     predictor = joblib.load(model_filename)
 
     # link_predictions = pd.DataFrame(columns=['NewUserID', 'Node', 'LinkProbability', 'LinkPredScore'])
@@ -87,19 +91,23 @@ def TwitchRecommender(new_user_id, new_user_community):
         features = pd.read_csv(large_twitch_features)
         features = features.rename(columns={'numeric_id': 'Node'})
         recommendations = pd.merge(recommendations, features, on="Node")
+        recommendations["affiliate"] = recommendations["affiliate"].astype(bool)
+        recommendations["mature"] = recommendations["mature"].astype(bool)
 
         # Formatting into a json
         json_recommendations = {"algorithm": "Link prediction"}
-        json_recommendations["recommendations:"] = recommendations.head(5).to_json(orient='records', lines=False)
+        json_recommendations["recommendations"] = recommendations[["Node", "affiliate", "language", "mature", "created_at", "updated_at"]].head(5).to_json(orient='records', lines=False)
 
 
     else:
         print("User not founded in dataset. Generating recommendations based on Popularity... ")
         recommendations = PopularityRecommender(new_user_id, new_user_community)
+        recommendations["affiliate"] = recommendations["affiliate"].astype(bool)
+        recommendations["mature"] = recommendations["mature"].astype(bool)
 
         # Formatting into a json
         json_recommendations = {"algorithm": "Popularity"}
-        json_recommendations["recommendations:"] = recommendations.head(5).to_json(orient='records', lines=False)
+        json_recommendations["recommendations"] = recommendations[["Node", "affiliate", "language", "mature", "created_at", "updated_at"]].head(5).to_json(orient='records', lines=False)
 
     return json_recommendations
 

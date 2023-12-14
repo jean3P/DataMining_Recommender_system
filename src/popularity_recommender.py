@@ -72,7 +72,7 @@ def PopularityRecommender(new_user_id, new_user_community):
     top_rank = pd.DataFrame(columns=community.columns)
 
     for index, row in community.iterrows():
-        if IsLinked(edges, new_user_id, row[0])==False:
+        if IsLinked(edges, new_user_id, row.iloc[0])==False:
             top_rank = pd.concat([top_rank, row.to_frame().T], ignore_index=True)
             if top_rank.shape[0]==10:
                 break
