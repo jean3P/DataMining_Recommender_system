@@ -12,7 +12,7 @@ class CommunityPredictor:
     def predict(self):
         # Generate predictions and probabilities
         probabilities = self.model.predict_proba(self.prediction_df)
-        predictions = self.model.predict(self.prediction_df)
+        # predictions = self.model.predict(self.prediction_df)
 
         # Find the index of the highest probability
         highest_prob_index = np.argmax(probabilities, axis=1)

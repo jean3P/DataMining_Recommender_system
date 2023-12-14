@@ -8,6 +8,7 @@ from twitch_app.src.twitch_data_fetcher import \
     TwitchDataFetcher  # Ensure this is the correct import for your fetcher class
 from .src.classification.CommunityPredictor import CommunityPredictor
 from .src.classification.TwitchDataProcessor import TwitchDataProcessor
+from .src.classification.TwitchRecommender import TwitchRecommender
 
 
 def format_twitch_user(twitch_user):
@@ -66,6 +67,12 @@ def fetch_twitch_data(request, username):
         # Parse the JSON result
         community_prediction = json.loads(community_prediction)[0]  # Assuming single prediction
 
+        # Fetch Recommendations
+        print(twitch_id)
+        print(community_prediction['community'])
+        recommendations_json = TwitchRecommender(twitch_id, community_prediction['community'])
+        recommendations = json.loads(recommendations_json)
+
         #
         # # Save new user info to database
         # Convert dates to the desired format before saving
@@ -80,6 +87,7 @@ def fetch_twitch_data(request, username):
 
         # Add community prediction to the response
         user_info.update(community_prediction)
+        user_info.update(recommendations)
 
         return JsonResponse(user_info)
 

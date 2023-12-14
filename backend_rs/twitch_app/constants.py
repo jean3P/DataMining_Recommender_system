@@ -2,4 +2,4 @@ import os
 
 
 model_path = os.path.join("twitch_app/src/classification/svm_model.joblib")
-community_labels = [0, 1, 2, 3, 8, 16, 28, 38, 41, 42, 50, 57, 72, 81, 85, 89, 111]
+community_labels = [0, 1, 2, 3, 6, 13, 36, 38, 44, 53, 59, 80, 86, 91, 93, 95, 108, 114]

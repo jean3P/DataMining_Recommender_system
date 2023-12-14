@@ -32,7 +32,7 @@ button {
   padding: 10px;
   border: 1px solid #fff; /* White border */
   border-radius: 8px;
-  max-width: 300px;
+  max-width: 600px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -93,3 +93,41 @@ button.clear:hover {
   color: #ff0000;
   margin-top: 10px;
 }
+
+.recommendations {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #fff; /* White border */
+  border-radius: 8px;
+  max-width: 600px; /* Increased width for better visibility */
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+  background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent background for readability */
+}
+
+.recommendations h2 {
+  color: #dcdcdc; /* Lighter shade of purple */
+  margin-bottom: 10px;
+  font-size: 1.2rem; /* Slightly larger font size for the heading */
+}
+
+.recommendations table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem; /* Slightly smaller font size for the table content */
+  margin-top: 10px; /* Add spacing between table and heading */
+}
+
+.recommendations th,
+.recommendations td {
+  text-align: left;
+  padding: 12px; /* Increase padding for better spacing */
+  border-bottom: 1px solid #fff;
+  word-break: break-word; /* Breaks long words to prevent overflow */
+}
+
+.recommendations td {
+  color: #dcdcdc; /* Light grey color for better readability */
+}
+
