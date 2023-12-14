@@ -46,6 +46,10 @@ class TwitchDataFetcher:
         user_features_df['language'] = None
         user_features_df['affiliated'] = None
 
+        features = pd.read_csv(large_twitch_features)
+        features = features.rename(columns={'numeric_id': 'Node'})
+
+
 
         response_user = requests.get(f'https://api.twitch.tv/helix/users?login={self.username}', headers=self.headers)
 
@@ -63,19 +67,31 @@ class TwitchDataFetcher:
 
             # Extract individual fields
             user_id = user_data.get('id', None)
-            username = user_data.get('login', None)
-            broadcaster_type = user_data.get('broadcaster_type', None)
-            # view_count = user_data.get('view_count', 0) # This field has got deprecated
-            created_at = user_data.get('created_at', None)
 
-            # Saving in dataframe
-            user_features_df['Id'] = [int(user_id)]
-            # user_features_df['views'] = [int(view_count)]
-            user_features_df['created_at'] = [created_at]
-            if broadcaster_type == 'affiliated':
-                user_features_df['affiliated'] = [1]
+            if user_id in features['Node'].values:
+                user_features_df['Id'] = [int(user_id)]
+
+                user_features_df['mature'] = 1
+                user_features_df['created_at'] = 1
+                user_features_df['updated_at'] = 1
+                # user_features_df['dead_account'] = 1
+                user_features_df['language'] = 1
+                user_features_df['affiliated'] = 1
+
             else:
-                user_features_df['affiliated'] = [0]
+                username = user_data.get('login', None)
+                broadcaster_type = user_data.get('broadcaster_type', None)
+                # view_count = user_data.get('view_count', 0) # This field has got deprecated
+                created_at = user_data.get('created_at', None)
+
+                # Saving in dataframe
+                user_features_df['Id'] = [int(user_id)]
+                # user_features_df['views'] = [int(view_count)]
+                user_features_df['created_at'] = [created_at]
+                if broadcaster_type == 'affiliated':
+                    user_features_df['affiliated'] = [1]
+                else:
+                    user_features_df['affiliated'] = [0]
 
         else:
             print("No user data found.")
@@ -96,9 +112,36 @@ class TwitchDataFetcher:
         else:
             print("No last stream data found.")
 
-        # print(user_features_df)
+
         
         return user_features_df
+    
+def get_username(user_id):
+    
+    username = None
+
+    client_id = 'o20wg0edq81zrbi4k44adg7qybf4vd'
+    access_token = 'm7j4z202jqbcz652y3n0k66er4ftv5'
+
+    headers = {'Client-ID': client_id,
+                    'Authorization': f'Bearer {access_token}'
+                    }
+    
+    response = requests.get(f'https://api.twitch.tv/helix/users?id={user_id}', headers=headers)
+
+    if response.status_code == 200:
+        if len(response.json()['data'])>0:
+            user_data = response.json()['data'][0]
+            username = user_data['login']  # The 'login' field contains the username
+            print(f"Username: {username}")
+        else:
+            print("There is no user data available")
+    else:
+        print(f"Failed to retrieve user data: {response.status_code}")
+
+    return username
+
+
 
 
         # response_stream_first =  requests.get(f'https://api.twitch.tv/helix/videos?user_id={user_id}&sort=time&first=1', headers=self.headers)
@@ -122,6 +165,8 @@ class TwitchDataFetcher:
         #     user_features_df['updated_at'] = last_stream_started_at
         # else:
         #     print("No first stream data found.")
+    
+
 
 
 def main():
@@ -131,13 +176,29 @@ def main():
     #username = 'el_pesadito'
     # username = "Gorgc"
     username = "twitchdev"
+    username = "944u3gva6ksunn6t"
 
     # Initializing the fetcher with the username
     fetcher = TwitchDataFetcher(username)
 
+
     # Fetching the user features
     features_df = fetcher.get_user_info()
+    print(features_df.dtypes)
     print('Features of the new user: \n ', features_df)
+
+    new_user_id = 495 # username="aphasia"
+    new_user_id = 8216 # username = "944u3gva6ksunn6t"
+    new_user_id = 62379 # username = "carlosm"
+    new_user_id = 10660 # username = "mamasitabatwoman"
+    new_user_id = 7574 # username = "qbexo"
+    new_user_id = 14241 # username = "kong"
+    new_user_id = 78 # username = "mashuiradu"
+    new_user_id = 2321 # username = "q2gbsksdsqcevlg"
+
+    print(f'Username of the user: {new_user_id} is: {get_username(new_user_id)}')
+
+
 
     
 if __name__ == "__main__":

@@ -94,7 +94,7 @@ def TwitchRecommender(new_user_id, new_user_community):
 
         # Formatting into a json
         json_recommendations = {"algorithm": "Link prediction"}
-        json_recommendations["recommendations"] = recommendations[["Node", "affiliate", "language", "mature", "created_at", "updated_at"]].head(5).to_json(orient='records', lines=False)
+        json_recommendations["recommendations"] = recommendations[["Node", "affiliate", "language", "mature", "created_at", "updated_at", "LinkProbability", "LinkPredScore"]].head(5).to_json(orient='records', lines=False)
 
 
     else:
@@ -105,7 +105,7 @@ def TwitchRecommender(new_user_id, new_user_community):
 
         # Formatting into a json
         json_recommendations = {"algorithm": "Popularity"}
-        json_recommendations["recommendations"] = recommendations[["Node", "affiliate", "language", "mature", "created_at", "updated_at"]].head(5).to_json(orient='records', lines=False)
+        json_recommendations["recommendations"] = recommendations[["Node", "affiliate", "language", "mature", "created_at", "updated_at", "num_edges"]].head(5).to_json(orient='records', lines=False)
 
     return json_recommendations
 
