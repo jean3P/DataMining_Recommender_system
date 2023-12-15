@@ -1,5 +1,7 @@
 import json
 from datetime import datetime
+
+import pandas as pd
 from django.http import JsonResponse
 import os
 from .constants import community_labels, model_path
@@ -9,6 +11,7 @@ from .models import TwitchUser
 from .src.classification.CommunityPredictor import CommunityPredictor
 from .src.classification.TwitchDataProcessor import TwitchDataProcessor
 from .src.classification.TwitchRecommender import TwitchRecommenderSystem
+from .src.classification.paths import large_twitch_features
 
 
 def format_twitch_user(twitch_user):
@@ -45,6 +48,31 @@ def fetch_twitch_data(request, username):
     fetcher = TwitchDataFetcher(username)
     twitch_id = fetcher.get_twitch_id()
 
+    features = pd.read_csv(large_twitch_features)
+    print(fetcher)
+    user_id = int(twitch_id)
+    # Filter the DataFrame to find the row with the matching numeric_id
+    matched_row = features[features['numeric_id'] == user_id]
+    flag = False
+    if not matched_row.empty:
+        # Get the first (and should be only) row of the matched data
+        user_data = matched_row.iloc[0]
+        flag = True
+        user_pretrained = {
+            'twitch_id': twitch_id,
+            'created_at': user_data['created_at'],
+            'affiliated': bool(user_data['affiliate']),
+            'language': user_data['language'],
+            'mature': bool(user_data['mature']),
+            'updated_at': user_data['updated_at']
+        }
+
+        user_pretrained = pd.DataFrame([user_pretrained])
+
+        print(user_pretrained)
+    else:
+        print(f"No data found for user ID {user_id}")
+
     if twitch_id:
         # Check if user already exists in database
         try:
@@ -52,11 +80,16 @@ def fetch_twitch_data(request, username):
             user_info = format_twitch_user(twitch_user)
         except TwitchUser.DoesNotExist:
             # If user does not exist, fetch user info and process
-            user_info_df = fetcher.get_user_info()
+            if flag:
+                # flag = False
+                user_info_df = user_pretrained
+            else:
+                user_info_df = fetcher.get_user_info()
             if not user_info_df.empty:
                 user_info = user_info_df.iloc[0].to_dict()
         # print(user_info)
         # Process the data for prediction
+
         if 'updated_at' not in user_info or user_info['updated_at'] is None:
             user_info.update({'updated_at': user_info.get('created_at')})
         if user_info.get('language') == '':
