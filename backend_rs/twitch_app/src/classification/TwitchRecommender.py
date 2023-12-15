@@ -64,10 +64,11 @@ class TwitchRecommenderSystem:
             recommendations = pd.merge(recommendations, features, on="Node")
             recommendations["affiliate"] = recommendations["affiliate"].astype(bool)
             recommendations["mature"] = recommendations["mature"].astype(bool)
+            recommendations["Community_rs"] = new_user_community
 
             json_recommendations = {
                 "algorithm": "Link prediction",
-                "results": recommendations[["Node", "affiliate", "language", "mature", "created_at", "updated_at", "LinkProbability", "LinkPredScore"]].head(5).to_dict(orient='records')
+                "results": recommendations[["Node", "affiliate", "language", "mature", "created_at", "updated_at", "LinkProbability", "LinkPredScore", "Community_rs"]].head(5).to_dict(orient='records')
             }
         else:
             recommendations = PopularityRecommender(new_user_id, new_user_community)
