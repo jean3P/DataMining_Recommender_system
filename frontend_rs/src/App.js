@@ -108,7 +108,8 @@ function App() {
                           <th>Created At</th>
                           <th>Updated At</th>
                           <th>Probability</th>
-                          <th>Prediction Score</th>
+                          {/*<th>Predict. Score</th>*/}
+                          <th>Comm.</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -121,7 +122,8 @@ function App() {
                               <td>{new Date(recommendation.created_at).toLocaleDateString()}</td>
                               <td>{new Date(recommendation.updated_at).toLocaleDateString()}</td>
                               <td>{recommendation.LinkProbability.toFixed(3)}</td>
-                              <td>{recommendation.LinkPredScore.toFixed(3)}</td>
+                              {/*<td>{recommendation.LinkPredScore.toFixed(3)}</td>*/}
+                              <td>{recommendation.Community_rs}</td>
                             </tr>
                         ))}
                         </tbody>
