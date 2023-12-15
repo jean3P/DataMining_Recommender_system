@@ -91,10 +91,11 @@ def TwitchRecommender(new_user_id, new_user_community):
         recommendations = pd.merge(recommendations, features, on="Node")
         recommendations["affiliate"] = recommendations["affiliate"].astype(bool)
         recommendations["mature"] = recommendations["mature"].astype(bool)
+        recommendations["Community"] = new_user_community
 
         # Formatting into a json
         json_recommendations = {"algorithm": "Link prediction"}
-        json_recommendations["recommendations"] = recommendations[["Node", "affiliate", "language", "mature", "created_at", "updated_at", "LinkProbability", "LinkPredScore"]].head(5).to_json(orient='records', lines=False)
+        json_recommendations["recommendations"] = recommendations[["Node", "affiliate", "language", "mature", "created_at", "updated_at", "LinkProbability", "LinkPredScore", "Community"]].head(5).to_json(orient='records', lines=False)
 
 
     else:

@@ -167,6 +167,8 @@ def main():
     features_df = fetcher.get_user_info()
     print('Features of the new user: \n ', features_df)
 
+
+    # User to try 
     new_user_id = 495 # username="aphasia"
     new_user_id = 8216 # username = "944u3gva6ksunn6t"
     new_user_id = 62379 # username = "carlosm"
