@@ -113,7 +113,8 @@ def TwitchRecommender(new_user_id, new_user_community):
 
 def main():
 
-    new_user_id = 37182
+    # new_user_id = 37182
+    new_user_id = 8216
     new_user_community = 0
 
     print("Preparing list of recommendations for user: ", new_user_id)
