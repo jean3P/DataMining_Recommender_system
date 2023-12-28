@@ -7,6 +7,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score
 import logging
 
+import time
+
 from constants import log_file_2, large_twitch_edges, large_twitch_features, outputs_path, louvain_file, leiden_file
 
 def configure_logging():
@@ -31,6 +33,7 @@ class LinkPredictor:
         self.G = None
         self.model = None
         self.lr_model = None
+        self.auc_score = None
 
 
 
@@ -102,13 +105,12 @@ class LinkPredictor:
             self.lr_model.fit(X_train[['similarity']], y_train)
 
             # Predict on the test set
-            #X_test['similarity'] = [self.predict_link(row['source'], row['target']) for index, row in X_test.iterrows()]
-            #y_pred = self.lr_model.predict_proba(X_test[['similarity']])[:, 1]
+            X_test['similarity'] = [self.predict_link(row['source'], row['target']) for index, row in X_test.iterrows()]
+            y_pred = self.lr_model.predict_proba(X_test[['similarity']])[:, 1]
 
             # Evaluate the model
-            #auc_score = roc_auc_score(y_test, y_pred)
-            #print(f'The AUC score of the link prediction model is: {auc_score}')
-
+            self.auc_score = roc_auc_score(y_test, y_pred)
+            print(f'The AUC score of the link prediction model is: {self.auc_score}')
         
         except self.G is None:
             logging.error("Need to create a graph.")
@@ -116,6 +118,19 @@ class LinkPredictor:
         except self.model is None:
             logging.error("Need to train model.")
 
+
+    def get_auc_score(self):
+        try:
+            return self.auc_score
+        
+        except self.G is None:
+            logging.error("Need to create a graph.")
+
+        except self.model is None:
+            logging.error("Need to train model.")
+        
+        except self.auc_score is None:
+            logging.error("Need to train model.")
     
     def predict_link(self, source, target):
         try:
@@ -172,6 +187,9 @@ def main():
     })
 
 
+    # Starting time counting
+    start_time = time.time()
+
     # Initialize the predictor
     predictor = LinkPredictor(nodes, edges)
 
@@ -184,21 +202,11 @@ def main():
     prediction_score = predictor.predict_link(2, 3)
     print(f'Similarity score for link between node 2 and node 3: {prediction_score}')
 
+    print("Process finished --- %s seconds ---" % (time.time() - start_time))
+
     # Predict the probability of a link between node 1 and node 2
     link_probability = predictor.predict_probability(2, 3)
     print(f'Probability of link between node 2 and node 3: {link_probability}')
-
-
-    # # Predict a link (example: between node 22970 and node 160961)
-    # prediction_score = predictor.predict_link(22970, 160961)
-    # print(f'Prediction score for link between node 22970 and node 160961: {prediction_score}')
-
-    # # Predict the probability of a link between node 22970 and node 160961
-    # link_probability = predictor.predict_probability(22970, 160961)
-    # print(f'Probability of link between node 22970 and node 160961: {link_probability}')
-
-
-
     
 
     

@@ -1,12 +1,9 @@
 import pandas as pd
-import networkx as nx
-from node2vec import Node2Vec
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import roc_auc_score
+import matplotlib.pyplot as plt
 
 from pathlib import Path
+from io import StringIO
 
 import joblib
 
@@ -111,27 +108,51 @@ def TwitchRecommender(new_user_id, new_user_community):
     return json_recommendations
 
 
+def plot_histo_scores(filename):
+    df = pd.read_csv(filename)
+    plt.figure(figsize=(10, 6))
+    plt.hist(df['Score'], bins=10, color='skyblue', edgecolor='black')
+    plt.title('Score Distribution')
+    plt.xlabel('Score')
+    plt.ylabel('Frequency')
+    plt.grid(True)
+    plt.show()
+
+def plot_bar_scores(filename):
+    df = pd.read_csv(filename)
+    plt.figure(figsize=(20, 4))
+    plt.bar(df['Community'], df['Score'], color='teal', edgecolor='black')
+    plt.title('Score by Community')
+    plt.xlabel('Community')
+    plt.ylabel('Score')
+    plt.xticks(df['Community'], rotation=90)  # Ensure all community labels are shown
+    plt.grid(axis='y')
+    plt.show()
+
+
 def main():
 
+    # Recommend LinkPredictor
     # new_user_id = 37182
     new_user_id = 8216
     new_user_community = 0
 
-    print("Preparing list of recommendations for user: ", new_user_id)
-    print(TwitchRecommender(new_user_id, new_user_community))
+    # print("Preparing list of recommendations for user: ", new_user_id)
+    # print(TwitchRecommender(new_user_id, new_user_community))
 
-    # recomm = TwitchRecommender(new_user_id, new_user_community)
-    # print(recomm.head(5))
-    # print(recomm.head(5).to_json(orient='records', lines=False))
-
-
+    # Recommend Popularity
     new_user_id = 170000
     # new_user_id = 206981151
     new_user_community = 7
     # new_user_community = 1
 
-    print("Preparing list of recommendations for user: ", new_user_id)
-    print(TwitchRecommender(new_user_id, new_user_community))
+    # print("Preparing list of recommendations for user: ", new_user_id)
+    # print(TwitchRecommender(new_user_id, new_user_community))
+
+    # Plot Auc scores
+    scores_filename = os.path.join(trained_models_path,'auc_scores.csv')
+    plot_histo_scores(scores_filename)
+    plot_bar_scores(scores_filename)
     
 
 if __name__ == "__main__":
