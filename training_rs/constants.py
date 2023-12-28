@@ -12,3 +12,4 @@ leiden_file = os.path.join("./../resources/leiden/leiden_community_assignments.c
 large_twitch_edges = os.path.join("./../resources/twitch_gamers/large_twitch_edges.csv")
 large_twitch_features = os.path.join("./../resources/twitch_gamers/large_twitch_features.csv")
 trained_models_path = os.path.join("./../resources/models/")
+communities_path = os.path.join("./../resources/communities/")
