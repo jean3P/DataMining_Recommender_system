@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Pereyra Principe
+    given-names: Jean Pool
+    email: jean.pereyraprincipe@students.unibe.ch
+    affiliation: "Institute of Computer Science, University of Bern, Switzerland"
+  - family-names: Hernández Goicochea
+    given-names: Sandro Joel
+    email: sandro.hernandezgoicochea@students.unibe.ch
+    affiliation: "Institute of Computer Science, University of Bern, Switzerland"
+title: "TWITCHCOMM: A Community-Based Recommender System for Twitch Users"
+date-released: 2024-01-13
+url: "https://github.com/jean3P/DataMining_Recommender_system"
