@@ -11,8 +11,8 @@ class TwitchDataFetcher:
         :param username: Twitch user's username
         """
         self.username = username
-        self.client_id = 'o20wg0edq81zrbi4k44adg7qybf4vd'
-        self.access_token = 'm7j4z202jqbcz652y3n0k66er4ftv5'
+        self.client_id = 'gp762nuuoqcoxypju8c569th9wz7q5'
+        self.access_token = 'a9nadaos0k952ndw4qr6fl7i6nj9es'
         self.headers = {
             'Client-ID': self.client_id,
             'Authorization': f'Bearer {self.access_token}'
@@ -93,6 +93,7 @@ class TwitchDataFetcher:
             'mature': int(stream_data.get('is_mature', False)),
             'updated_at': updated_formatted_date
         }
+        print(user_info)
         return pd.DataFrame([user_info])
 
 # def main():
