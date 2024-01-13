@@ -38,30 +38,57 @@ function App() {
 
           {userData && (
               <div className="user-data">
-                <p><strong>ID:</strong> {userData.twitch_id}</p>
-                <p><strong>Created At:</strong> {userData.created_at && new Date(userData.created_at).toLocaleDateString()}</p>
-                <p><strong>Affiliated:</strong> {userData.affiliated ? 'Yes' : 'No'}</p>
-                <p><strong>Language:</strong> {userData.language}</p>
-                <p><strong>Mature Content:</strong> {userData.mature ? 'Yes' : 'No'}</p>
-                <p><strong>Last Updated:</strong> {userData.updated_at && new Date(userData.updated_at).toLocaleDateString()}</p>
+                <div className="info-container">
+                  <div className="user-info">
+                    <h2>User Information</h2>
+                    <table>
+                      <tbody>
+                      <tr>
+                        <th>ID</th>
+                        <td>{userData.twitch_id}</td>
+                      </tr>
+                      <tr>
+                        <th>Created At</th>
+                        <td>{userData.created_at && new Date(userData.created_at).toLocaleDateString()}</td>
+                      </tr>
+                      <tr>
+                        <th>Affiliated</th>
+                        <td>{userData.affiliated ? 'Yes' : 'No'}</td>
+                      </tr>
+                      <tr>
+                        <th>Language</th>
+                        <td>{userData.language}</td>
+                      </tr>
+                      <tr>
+                        <th>Mature Content</th>
+                        <td>{userData.mature ? 'Yes' : 'No'}</td>
+                      </tr>
+                      <tr>
+                        <th>Last Updated</th>
+                        <td>{userData.updated_at && new Date(userData.updated_at).toLocaleDateString()}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
 
-                {userData.community !== undefined && (
-                    <div className="community-data">
-                      <h2>Community Prediction</h2>
-                      <table>
-                        <tbody>
-                        <tr>
-                          <th>Community</th>
-                          <td>{userData.community}</td>
-                        </tr>
-                        <tr>
-                          <th>Probability</th>
-                          <td>{userData.probability}</td>
-                        </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                )}
+                  {userData.community !== undefined && (
+                      <div className="community-data">
+                        <h2>Community Prediction</h2>
+                        <table>
+                          <tbody>
+                          <tr>
+                            <th>Community</th>
+                            <td>{userData.community}</td>
+                          </tr>
+                          <tr>
+                            <th>Probability</th>
+                            <td>{userData.probability}</td>
+                          </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                  )}
+                </div>
 
                 {userData.algorithm === 'Popularity' && userData.results && (
                     <div className="recommendations">

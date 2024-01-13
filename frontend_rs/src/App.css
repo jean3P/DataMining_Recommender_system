@@ -1,11 +1,11 @@
 .App {
   text-align: center;
-  color: white;
-  background-color: #6441a5; /* Twitch's primary color */
+  color: #E3E3E3; /* Lighter color for better contrast */
+  background-color: #252839; /* Darkened purple */
 }
 
 .App-header {
-  background-color: #9146ff;
+  background-color: #6772A4; /* Softened purple */
   padding: 20px;
   font-family: 'Roobert', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
@@ -15,14 +15,16 @@ input {
   margin-right: 10px;
   border: none;
   border-radius: 4px;
+  color: #333;
+  background-color: #E3E3E3;
 }
 
 button {
   padding: 10px;
   border: none;
   border-radius: 4px;
-  background-color: #772ce8;
-  color: white;
+  background-color: #C2A2FF;
+  color: #333; /* Dark color for better contrast */
   cursor: pointer;
 }
 
@@ -30,45 +32,61 @@ button {
   text-align: left;
   margin-top: 20px;
   padding: 10px;
-  border: 1px solid #fff; /* White border */
+  border: 1px solid #B3B3B3; /* Gray border */
   border-radius: 8px;
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
+  background-color: #434857; /* Darkened blue */
 }
 
-.user-data p {
-  margin: 5px 0;
-  font-size: 1rem;
-  line-height: 1.5;
+
+.user-data {
+  text-align: left;
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #B3B3B3; /* Gray border */
+  border-radius: 8px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #434857; /* Darkened blue */
+}
+
+
+.info-container {
+  display: flex;
+  justify-content: space-between;
 }
 
 button.clear {
-  background-color: #e44d4d; /* Red color for clear button */
+  background-color: #ff3333; /* Bright red color for clear button */
   margin-left: 10px;
 }
 
+
 button.clear:hover {
-  background-color: #f76c6c; /* Lighter red on hover */
+  background-color: #ff4d4d; /* Lighter red on hover */
 }
 
 
 .community-data {
   margin-top: 20px;
   padding: 10px;
-  border: 1px solid #fff; /* White border */
+  border: 1px solid #B3B3B3; /* Gray border */
   border-radius: 8px;
-  max-width: 400px; /* Increased width for better visibility */
+  max-width: 400px;
   margin-left: auto;
-  margin-right: auto;
   text-align: left;
-  background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent background for readability */
+  background-color: #434857; /* Darkened blue */
+  color: #C2A2FF; /* Lightened purple for better readability */
 }
 
+
 .community-data h2 {
-  color: #dcdcdc; /* Lighter shade of purple */
+  color: #E3E3E3; /* Lighter shade of white */
   margin-bottom: 10px;
-  font-size: 1.2rem; /* Slightly larger font size for the heading */
+  font-size: 1.2rem;
 }
 
 .community-data table {
@@ -81,33 +99,34 @@ button.clear:hover {
 .community-data td {
   text-align: left;
   padding: 8px;
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid #B3B3B3; /* Gray border */
   word-break: break-word; /* Breaks long words to prevent overflow */
 }
 
 .community-data td {
-  color: #dcdcdc; /* Light grey color for better readability */
+  color: #C2A2FF; /* Lightened purple for better readability */
 }
 
 .error {
-  color: #ff0000;
+  color: #ff3333; /* Bright red for better visibility */
   margin-top: 10px;
 }
 
 .recommendations {
   margin-top: 20px;
   padding: 10px;
-  border: 1px solid #fff; /* White border */
+  border: 1px solid #B3B3B3; /* Gray border */
   border-radius: 8px;
-  max-width: 900px; /* Increased width for better visibility */
+  max-width: 900px;
   margin-left: auto;
   margin-right: auto;
   text-align: left;
-  background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent background for readability */
+  background-color: #434857; /* Darkened blue */
+  color: #C2A2FF; /* Lightened purple for better readability */
 }
 
 .recommendations h2 {
-  color: #dcdcdc; /* Lighter shade of purple */
+  color: #E3E3E3; /* Lighter color for better contrast */
   margin-bottom: 10px;
   font-size: 1.2rem; /* Slightly larger font size for the heading */
 }
@@ -123,11 +142,11 @@ button.clear:hover {
 .recommendations td {
   text-align: left;
   padding: 12px; /* Increase padding for better spacing */
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid #B3B3B3; /* Gray border */
   word-break: break-word; /* Breaks long words to prevent overflow */
 }
 
 .recommendations td {
-  color: #dcdcdc; /* Light grey color for better readability */
+  color: #C2A2FF; /* Lightened purple for better readability */
 }
 
