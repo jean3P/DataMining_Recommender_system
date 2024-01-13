@@ -1,4 +1,4 @@
-# DataMining Recommender System for Twitch
+# DataMining Recommender System for Twitch (TWITCHCOMM)
 
 ## Overview
 The DataMining Recommender System is designed to enhance the user experience on Twitch by providing personalized streamer recommendations. This system leverages data mining techniques to predict communities within the Twitch social network and recommend streamers based on these community affiliations.
