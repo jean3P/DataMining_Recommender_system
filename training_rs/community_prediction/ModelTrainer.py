@@ -21,11 +21,15 @@ def plot_confusion_matrix(y_true, y_pred, model_type):
     # Generate confusion matrix
     conf_matrix = confusion_matrix(y_true, y_pred)
 
+    # Set community numbers
+    communities = [0, 1, 2, 3, 6, 13, 36, 38, 44, 53, 59, 80, 86, 91, 93, 95, 108, 114]
+
     # Create a heatmap from the confusion matrix
     plt.figure(figsize=(10, 7))
-    sns.heatmap(conf_matrix, annot=True, fmt='g', cmap='Blues')
-    plt.xlabel('Predicted Label')
-    plt.ylabel('True Label')
+    sns.heatmap(conf_matrix, annot=True, fmt='g', cmap='Blues',
+                xticklabels=communities, yticklabels=communities) # Here we set custom labels
+    plt.xlabel('Predicted Community')
+    plt.ylabel('True Community')
     plt.title(f'Confusion Matrix - {model_type}')
     plt.show()
 
