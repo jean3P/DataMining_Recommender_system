@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './App.css';
 
+/**
+ * The App method represents a React component that fetches and displays user data from the Twitch API
+ *
+ * @returns {JSX.Element} The JSX element representing the App component
+ */
 function App() {
   const [username, setUsername] = useState('');
   const [userData, setUserData] = useState(null);
@@ -9,7 +14,7 @@ function App() {
 
   const fetchUserData = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/fetch-twitch-data/${username}/`);
+      const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/fetch-twitch-data/${username}/`);
       setUserData(response.data);
       setError('');
     } catch (err) {
