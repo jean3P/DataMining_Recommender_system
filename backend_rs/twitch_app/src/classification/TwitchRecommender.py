@@ -9,6 +9,38 @@ from twitch_app.src.classification.popularity_recommender import PopularityRecom
 
 
 class TwitchRecommenderSystem:
+    """
+    Class representing a Twitch Recommender System.
+
+    Methods:
+        - configure_logging()
+            Configures logging for the system.
+
+        - twitch_link_predict_recommender(new_user_id, new_user_community, community_nodes, community_edges)
+            Performs link prediction and returns recommendations for a given user in a specific community.
+
+            Parameters:
+                - new_user_id (int): The ID of the new user.
+                - new_user_community (int): The ID of the community to which the new user belongs.
+                - community_nodes (dict): Dictionary containing community ID as key and corresponding nodes as value.
+                - community_edges (dict): Dictionary containing community ID as key and corresponding edges as value.
+
+            Returns:
+                - link_predictions (DataFrame): DataFrame containing link predictions and scores, sorted by link probability.
+
+        - twitch_recommender(new_user_id, new_user_community)
+            Recommends Twitch channels to a new user in a specific community.
+
+            Parameters:
+                - new_user_id (int): The ID of the new user.
+                - new_user_community (int): The ID of the community to which the new user belongs.
+
+            Returns:
+                - json_recommendations (str): JSON string containing the recommendations for the new user.
+
+        - main()
+            Entry point for the Twitch Recommender System. Runs example queries and prints the recommendations.
+    """
     def __init__(self):
         # Set seed for reproducibility
         np.random.seed(0)

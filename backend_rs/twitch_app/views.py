@@ -6,7 +6,7 @@ from django.http import JsonResponse
 import os
 from .constants import community_labels, model_path
 from twitch_app.src.twitch_data_fetcher import \
-    TwitchDataFetcher  # Ensure this is the correct import for your fetcher class
+    TwitchDataFetcher
 from .models import TwitchUser
 from .src.classification.CommunityPredictor import CommunityPredictor
 from .src.classification.TwitchDataProcessor import TwitchDataProcessor
@@ -45,6 +45,16 @@ def save_date_in_format(date_str, format_to_save='%Y-%m-%d %H:%M:%S'):
 
 
 def fetch_twitch_data(request, username):
+    """
+    Fetches Twitch data for a given username.
+
+    :param request: The request object.
+    :param username: The username of the Twitch user.
+    :return: A JsonResponse containing the fetched Twitch data or an error message.
+
+    Example usage:
+    fetch_twitch_data(request, 'example_username')
+    """
     fetcher = TwitchDataFetcher(username)
     twitch_id = fetcher.get_twitch_id()
 
@@ -81,14 +91,11 @@ def fetch_twitch_data(request, username):
         except TwitchUser.DoesNotExist:
             # If user does not exist, fetch user info and process
             if flag:
-                # flag = False
                 user_info_df = user_pretrained
             else:
                 user_info_df = fetcher.get_user_info()
             if not user_info_df.empty:
                 user_info = user_info_df.iloc[0].to_dict()
-        # print(user_info)
-        # Process the data for prediction
 
         if 'updated_at' not in user_info or user_info['updated_at'] is None:
             user_info.update({'updated_at': user_info.get('created_at')})
@@ -96,7 +103,7 @@ def fetch_twitch_data(request, username):
             user_info.update({'language': 'EN'})
         processor = TwitchDataProcessor(user_info)
         prediction_df = processor.process_data()
-        # print(prediction_df)
+
         m_p = os.path.join(os.getcwd(), model_path)
         predictor = CommunityPredictor(m_p, community_labels, prediction_df)
         community_prediction = predictor.predict()
@@ -111,8 +118,7 @@ def fetch_twitch_data(request, username):
         recommendations_json = recommender_system.twitch_recommender(twitch_id, community_prediction['community'])
         recommendations = json.loads(recommendations_json)
 
-        #
-        # # Save new user info to database
+        # Save new user info to database
         # Convert dates to the desired format before saving
         user_info['created_at'] = save_date_in_format(user_info['created_at'])
         user_info['updated_at'] = save_date_in_format(user_info['updated_at'])

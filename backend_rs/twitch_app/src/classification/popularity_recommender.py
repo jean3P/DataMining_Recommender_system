@@ -83,33 +83,9 @@ def PopularityRecommender(new_user_id, new_user_community):
                 break
 
     return top_rank
-    # print('user values:')
-    # print('user id:', new_user_id)
-    # print('user community:', new_user_community)
-    # print('recommendations: \n', top_rank)
-    # print('community info: \n', community.describe())
-
-
-# def AllCommunityRecommendations(features, edges):
-
-#     # Selecting some nodes for each Leiden community
-#     nodes_id_comm = [141493, 98343, 1679, 30061, 30293, 164528, 47048, 100109, 25310, 91680, 22970, 16162, 17553, 122816, 146294, 1942, 152300, 132852, 109249, 67761, 44630, 77002]
-#     number_comm = list(range(0,22))
-
-#     nodes = features[features['Id'].isin(nodes_id_comm)].sort_values(by='Community')
-
-#     print(nodes.shape)
-
-#     for index, row in nodes.iterrows():
-#         node = pd.DataFrame([row])
-
-
-#         PopularityRecommender(node, features, edges)
 
 
 def main():
-    # Loading data
-    # louvain = pd.read_csv(louvain_file)
     leiden = pd.read_csv(leiden_file)
     edges = pd.read_csv(large_twitch_edges)
     features = pd.read_csv(large_twitch_features)
@@ -126,8 +102,6 @@ def main():
     print(node_to_recommend.iloc[0]['Node'])
 
     print(PopularityRecommender(node_to_recommend.iloc[0]['Node'], node_to_recommend.iloc[0]['Community']))
-
-    # AllCommunityRecommendations(features_num_edges, edges)
 
 
 if __name__ == "__main__":

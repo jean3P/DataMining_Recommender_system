@@ -4,6 +4,29 @@ import numpy as np
 
 
 class CommunityPredictor:
+    """
+
+    CommunityPredictor class represents a predictor for community labels based on a trained model.
+
+    Attributes:
+    - model (object): The trained model used for prediction.
+    - community_labels (list): The labels corresponding to different communities.
+    - prediction_df (object): The data used for prediction.
+
+    Methods:
+    - __init__(self, model_path, community_labels, prediction_df):
+        Initializes a CommunityPredictor object.
+        Args:
+            model_path (str): The path to the serialized model.
+            community_labels (list): The labels corresponding to different communities.
+            prediction_df (object): The data used for prediction.
+
+    - predict(self):
+        Generates predictions for community labels.
+        Returns:
+            str: JSON-string representation of predictions and probabilities.
+
+    """
     def __init__(self, model_path, community_labels, prediction_df):
         self.model = load(model_path)
         self.community_labels = community_labels

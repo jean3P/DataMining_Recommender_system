@@ -4,7 +4,6 @@ from node2vec import Node2Vec
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import roc_auc_score
 import logging
 
 from twitch_app.src.classification.paths import log_file_2
@@ -33,8 +32,6 @@ class LinkPredictor:
         self.model = None
         self.lr_model = None
 
-
-
     def create_graph(self):
         """
         Create a graph from the training data.
@@ -43,7 +40,6 @@ class LinkPredictor:
 
         # Creating a graph from the edges
         self.G = nx.from_pandas_edgelist(self.edges, 'source', 'target')
-
 
     def train_node2vec(self):
         """
@@ -56,7 +52,6 @@ class LinkPredictor:
             # node2vec = Node2Vec(self.G, dimensions=64, walk_length=30, num_walks=200, workers=4)
             node2vec = Node2Vec(self.G, dimensions=10, walk_length=10, num_walks=50, workers=4)
 
-
             # Train node2vec model
             self.model = node2vec.fit(window=10, min_count=1, batch_words=4)
 
@@ -65,17 +60,13 @@ class LinkPredictor:
 
         except self.G is None:
             logging.error("Need to create a graph.")
-            
-        
-    
+
     def train_link_predictor(self):
         """
         Trains link predictor
         """
 
-        try: 
-            # Prepare the dataset for the link prediction
-            # Generate positive examples
+        try:
             positive_examples = self.edges.copy()
 
             # Generate negative examples
@@ -96,38 +87,28 @@ class LinkPredictor:
                 examples[['source', 'target']], examples['label'], test_size=0.3, random_state=0)
 
             # Apply prediction to the dataset
-            X_train['similarity'] = [self.predict_link(row['source'], row['target']) for index, row in X_train.iterrows()]
+            X_train['similarity'] = [self.predict_link(row['source'], row['target']) for index, row in
+                                     X_train.iterrows()]
 
             # Train a logistic regression model
             self.lr_model = LogisticRegression(random_state=0)
             self.lr_model.fit(X_train[['similarity']], y_train)
 
-            # Predict on the test set
-            #X_test['similarity'] = [self.predict_link(row['source'], row['target']) for index, row in X_test.iterrows()]
-            #y_pred = self.lr_model.predict_proba(X_test[['similarity']])[:, 1]
-
-            # Evaluate the model
-            #auc_score = roc_auc_score(y_test, y_pred)
-            #print(f'The AUC score of the link prediction model is: {auc_score}')
-
-        
         except self.G is None:
             logging.error("Need to create a graph.")
 
         except self.model is None:
             logging.error("Need to train model.")
 
-    
     def predict_link(self, source, target):
         try:
             vector_1 = self.model.wv.get_vector(str(source))
             vector_2 = self.model.wv.get_vector(str(target))
 
             return np.dot(vector_1, vector_2) / (np.linalg.norm(vector_1) * np.linalg.norm(vector_2))
-        
+
         except self.model is None:
             logging.error("Need to train model.")
-
 
     def predict_probability(self, source, target):
         """
@@ -156,9 +137,7 @@ class LinkPredictor:
         return probability
 
 
-    
 def main():
-
     # Example of the link predictor usage
 
     # Creating a simple graph with nodes and edges
@@ -171,7 +150,6 @@ def main():
         'source': [1, 1, 2, 3, 3],
         'target': [2, 3, 4, 4, 5]
     })
-
 
     # Initialize the predictor
     predictor = LinkPredictor(nodes, edges)
@@ -190,20 +168,6 @@ def main():
     print(f'Probability of link between node 2 and node 3: {link_probability}')
 
 
-    # # Predict a link (example: between node 22970 and node 160961)
-    # prediction_score = predictor.predict_link(22970, 160961)
-    # print(f'Prediction score for link between node 22970 and node 160961: {prediction_score}')
-
-    # # Predict the probability of a link between node 22970 and node 160961
-    # link_probability = predictor.predict_probability(22970, 160961)
-    # print(f'Probability of link between node 22970 and node 160961: {link_probability}')
-
-
-
-    
-
-    
 if __name__ == "__main__":
     configure_logging()
     main()
-    
