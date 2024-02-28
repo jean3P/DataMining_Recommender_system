@@ -18,6 +18,21 @@ from constants import path_root_backend_classification_directory
 
 
 def plot_confusion_matrix(y_true, y_pred, model_type):
+    """
+    Plot confusion matrix based on the true labels and predicted labels.
+
+    :param y_true: Array-like of true labels.
+    :param y_pred: Array-like of predicted labels.
+    :param model_type: The type or name of the model used for prediction.
+    :return: None
+
+    Example Usage:
+    --------------
+    >>> y_true = [0, 1, 1, 2]
+    >>> y_pred = [0, 1, 2, 0]
+    >>> model_type = 'Random Forest'
+    >>> plot_confusion_matrix(y_true, y_pred, model_type)
+    """
     # Generate confusion matrix
     conf_matrix = confusion_matrix(y_true, y_pred)
 
@@ -35,6 +50,26 @@ def plot_confusion_matrix(y_true, y_pred, model_type):
 
 
 class ModelTrainer:
+    """
+    The `ModelTrainer` class is used to train and evaluate machine learning models. It takes in various parameters to initialize the class and provides methods for loading and preprocessing
+    * data, performing cross-validation, training the model, and evaluating the model.
+
+    Methods:
+    - `__init__(self, model_type, train_file, test_file, target_col, drop_col=None)`: Initializes the `ModelTrainer` class with the given parameters.
+    - `load_data(self)`: Loads the training and test data from the specified CSV files. Drops specified columns if provided.
+    - `preprocess_data(self)`: Preprocesses the loaded data by handling date features, transforming categorical and binary columns.
+    - `perform_cross_validation(self, n_splits=5)`: Performs k-fold cross-validation on the training data using the specified model type. Returns the average cross-validation score.
+    - `train_model(self)`: Trains the model using the training data and the specified model type. Saves the trained model and evaluates it using the test data.
+
+    Example usage:
+    ```python
+    trainer = ModelTrainer(model_type='logistic_regression', train_file='train.csv', test_file='test.csv', target_col='label')
+    trainer.load_data()
+    trainer.preprocess_data()
+    trainer.perform_cross_validation()
+    trainer.train_model()
+    ```
+    """
     def __init__(self, model_type, train_file, test_file, target_col, drop_col=None):
         self.preprocessor = None
         self.test_data = None
